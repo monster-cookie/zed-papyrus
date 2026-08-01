@@ -62,10 +62,14 @@ export default grammar({
 
   conflicts: $ => [
     [$._expression, $._type_identifier],
+    [$.property_definition, $.auto_property_definition],
   ],
 
   rules: {
-    source_file: $ => repeat(choice($._top_level_declaration, $.newline)),
+    source_file: $ => seq(
+      repeat(choice(seq($._top_level_declaration, $.newline), $.newline)),
+      optional($._top_level_declaration),
+    ),
 
     _top_level_declaration: $ => choice(
       $.script_declaration,
@@ -89,22 +93,19 @@ export default grammar({
       field('name', $._type_identifier),
       optional(seq(keyword('Extends'), field('parent', $._type_identifier))),
       repeat($._declaration_modifier),
-      $.newline,
     ),
 
     import_declaration: $ => seq(
       keyword('Import'),
       field('module', $._type_identifier),
-      $.newline,
     ),
 
     struct_declaration: $ => seq(
       keyword('Struct'),
       field('name', $.identifier),
       $.newline,
-      repeat(choice($.struct_member, $.newline)),
+      repeat(choice(seq($.struct_member, $.newline), $.newline)),
       keyword('EndStruct'),
-      $.newline,
     ),
 
     struct_member: $ => seq(
@@ -113,13 +114,11 @@ export default grammar({
       optional(seq('=', field('value', $._expression))),
       repeat($._declaration_modifier),
       repeat($.guard_requirement),
-      $.newline,
     ),
 
     custom_event_declaration: $ => seq(
       keyword('CustomEvent'),
       field('name', $.identifier),
-      $.newline,
     ),
 
     group_declaration: $ => seq(
@@ -127,9 +126,11 @@ export default grammar({
       field('name', $.identifier),
       repeat($._group_modifier),
       $.newline,
-      repeat(choice($.property_definition, $.auto_property_definition, $.newline)),
+      repeat(choice(
+        seq(choice($.property_definition, $.auto_property_definition), $.newline),
+        $.newline,
+      )),
       keyword('EndGroup'),
-      $.newline,
     ),
 
     property_definition: $ => seq(
@@ -139,9 +140,11 @@ export default grammar({
       repeat($._property_modifier),
       repeat($.guard_requirement),
       $.newline,
-      repeat(choice($.function_definition, $.native_function_declaration, $.newline)),
+      repeat(choice(
+        seq(choice($.function_definition, $.native_function_declaration), $.newline),
+        $.newline,
+      )),
       keyword('EndProperty'),
-      $.newline,
     ),
 
     auto_property_definition: $ => seq(
@@ -149,11 +152,9 @@ export default grammar({
       keyword('Property'),
       field('name', $.identifier),
       optional(seq('=', field('value', $._expression))),
-      repeat($._property_modifier),
+      repeat(choice($._property_modifier, $.guard_requirement)),
       field('kind', choice(keyword('Auto'), keyword('AutoReadOnly'))),
-      repeat($._property_modifier),
-      repeat($.guard_requirement),
-      $.newline,
+      repeat(choice($._property_modifier, $.guard_requirement)),
     ),
 
     state_declaration: $ => seq(
@@ -162,14 +163,15 @@ export default grammar({
       field('name', $.identifier),
       $.newline,
       repeat(choice(
-        $.function_definition,
-        $.native_function_declaration,
-        $.event_definition,
-        $.native_event_declaration,
+        seq(choice(
+          $.function_definition,
+          $.native_function_declaration,
+          $.event_definition,
+          $.native_event_declaration,
+        ), $.newline),
         $.newline,
       )),
       keyword('EndState'),
-      $.newline,
     ),
 
     function_definition: $ => seq(
@@ -177,9 +179,8 @@ export default grammar({
       repeat($._function_modifier_without_native),
       repeat($.guard_requirement),
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
       keyword('EndFunction'),
-      $.newline,
     ),
 
     native_function_declaration: $ => seq(
@@ -188,7 +189,6 @@ export default grammar({
       keyword('Native'),
       repeat($._function_modifier_without_native),
       repeat($.guard_requirement),
-      $.newline,
     ),
 
     _function_header: $ => seq(
@@ -203,9 +203,8 @@ export default grammar({
       repeat($._function_modifier_without_native),
       repeat($.guard_requirement),
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
       keyword('EndEvent'),
-      $.newline,
     ),
 
     native_event_declaration: $ => seq(
@@ -213,7 +212,6 @@ export default grammar({
       repeat($._function_modifier_without_native),
       keyword('Native'),
       repeat($._function_modifier_without_native),
-      $.newline,
     ),
 
     _event_header: $ => seq(
@@ -235,7 +233,6 @@ export default grammar({
       keyword('Guard'),
       field('name', $.identifier),
       optional(keyword('ProtectsFunctionLogic')),
-      $.newline,
     ),
 
     guard_requirement: $ => seq(
@@ -262,60 +259,61 @@ export default grammar({
       keyword('If'),
       field('condition', $._expression),
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
       repeat($.elseif_clause),
       optional($.else_clause),
       keyword('EndIf'),
-      $.newline,
     ),
 
     elseif_clause: $ => seq(
       keyword('ElseIf'),
       field('condition', $._expression),
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
     ),
 
     else_clause: $ => seq(
       keyword('Else'),
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
     ),
 
     while_statement: $ => seq(
       keyword('While'),
       field('condition', $._expression),
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
       keyword('EndWhile'),
-      $.newline,
     ),
 
     lock_guard_statement: $ => seq(
       keyword('LockGuard'),
-      field('guards', $.guard_list),
+      $._guard_arguments,
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
       keyword('EndLockGuard'),
-      $.newline,
     ),
 
     try_lock_guard_statement: $ => seq(
       keyword('TryLockGuard'),
-      field('guards', $.guard_list),
+      $._guard_arguments,
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
       repeat($.else_try_lock_guard_clause),
       optional($.else_clause),
       keyword('EndTryLockGuard'),
-      $.newline,
     ),
 
     else_try_lock_guard_clause: $ => seq(
       choice(keyword('ElseTryLockGuard'), keyword('ElseLockGuard')),
-      field('guards', $.guard_list),
+      $._guard_arguments,
       $.newline,
-      repeat(choice($._statement, $.newline)),
+      repeat(choice(seq($._statement, $.newline), $.newline)),
+    ),
+
+    _guard_arguments: $ => choice(
+      field('guards', $.guard_list),
+      seq('(', field('guards', $.guard_list), ')'),
     ),
 
     variable_declaration: $ => seq(
@@ -324,23 +322,20 @@ export default grammar({
       optional(seq('=', field('value', $._expression))),
       repeat($._variable_modifier),
       repeat($.guard_requirement),
-      $.newline,
     ),
 
     assignment_statement: $ => prec.right(PREC.ASSIGNMENT, seq(
       field('left', $._assignable_expression),
       field('operator', choice('=', '+=', '-=', '*=', '/=', '%=')),
       field('right', $._expression),
-      $.newline,
     )),
 
     return_statement: $ => seq(
       keyword('Return'),
       optional($._expression),
-      $.newline,
     ),
 
-    expression_statement: $ => seq($._expression, $.newline),
+    expression_statement: $ => $._expression,
 
     _assignable_expression: $ => choice(
       $.identifier,
@@ -469,7 +464,11 @@ export default grammar({
     none: _ => keyword('None'),
     integer: _ => token(choice(/0[xX][0-9a-fA-F]+/, /[0-9]+/)),
     float: _ => token(choice(/[0-9]+\.[0-9]+([eE][+-]?[0-9]+)?[fF]?/, /[0-9]+[eE][+-]?[0-9]+[fF]?/)),
-    string: $ => seq('"', repeat(choice($.escape_sequence, /[^"\\\r\n]/)), '"'),
+    string: $ => seq(
+      '"',
+      repeat(choice($.escape_sequence, token.immediate(prec(1, /[^"\\\r\n]+/)))),
+      token.immediate('"'),
+    ),
     escape_sequence: _ => token.immediate(/\\[nrt"\\]/),
 
     _declaration_modifier: _ => choice(

@@ -65,6 +65,24 @@ const queryFiles = (await readdir(queryPath, { withFileTypes: true }))
   .filter((entry) => entry.isFile() && path.extname(entry.name) === ".scm")
   .map((entry) => path.join(queryPath, entry.name))
   .sort();
+const inlineValidSources = new Map([
+  [
+    "modern syntax without a final newline",
+    [
+      "ScriptName InlineRegression",
+      "Guard DataGuard",
+      "Int Property GuardedValue RequiresGuard (DataGuard) Auto Conditional",
+      "Function Run()",
+      "    LockGuard(DataGuard)",
+      "        Debug.Trace(\"Guard value: \" + GuardedValue + \"; running work\")",
+      "    EndLockGuard",
+      "EndFunction",
+    ].join("\n"),
+  ],
+]);
+const inlineInvalidSources = new Map([
+  ["same-line declarations", "ScriptName First ScriptName Second"],
+]);
 
 for (const filePath of validFiles) {
   const source = await readFile(filePath, "utf8");
@@ -84,6 +102,26 @@ for (const filePath of invalidFiles) {
 
   if (!tree.rootNode.hasError) {
     failures.push(`${path.relative(repositoryRoot, filePath)} was expected to contain a syntax error.`);
+  }
+
+  tree.delete();
+}
+
+for (const [name, source] of inlineValidSources) {
+  const tree = parser.parse(source);
+
+  if (tree.rootNode.hasError) {
+    failures.push(`The ${name} regression case unexpectedly contains an ERROR or MISSING node:\n${tree.rootNode}`);
+  }
+
+  tree.delete();
+}
+
+for (const [name, source] of inlineInvalidSources) {
+  const tree = parser.parse(source);
+
+  if (!tree.rootNode.hasError) {
+    failures.push(`The ${name} regression case was expected to contain a syntax error.`);
   }
 
   tree.delete();
@@ -112,6 +150,7 @@ if (failures.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(`Parsed ${validFiles.length} valid and ${invalidFiles.length} invalid Papyrus fixtures successfully.`);
+  console.log(`Validated ${inlineValidSources.size} valid and ${inlineInvalidSources.size} invalid inline regression cases.`);
   console.log(`Verified ${requiredNodeTypes.size} required Starfield grammar node types.`);
   console.log(`Compiled ${queryFiles.length} Zed Tree-sitter queries successfully.`);
 }

@@ -4,16 +4,19 @@ This record separates automated grammar validation from manual Zed acceptance. C
 
 ## Automated results
 
-Results recorded on Windows x64 on 2026-07-31:
+Results recorded on Windows x64 on 2026-08-01:
 
 | Check | Result | Evidence |
 | --- | --- | --- |
 | `npm run grammar:generate` | Pass | Generated parser reports Tree-sitter `LANGUAGE_VERSION 15`. |
 | `npm run grammar:build` | Pass | Created `grammar/papyrus.wasm` using Tree-sitter CLI 0.26.11. |
-| `npm run grammar:test` | Pass | Parsed two valid and one invalid original fixtures, checked 17 required Starfield node types, and compiled six Zed queries. |
+| `npm run grammar:test` | Pass | Parsed two valid and one invalid original fixtures, validated one valid and one invalid inline regression case, checked 17 required Starfield node types, and compiled six Zed queries. |
 | `npm run grammar:test:native` | Pass | Both native Tree-sitter corpus cases passed: declarations/members and Starfield guard blocks. |
+| Installed Starfield source audit | Pass | Recursively parsed 5,086 authoritative `.psc` files with zero `ERROR` and zero `MISSING` nodes, including all 3,013 files under `Fragments`. |
 
-The valid fixtures cover scripts, inheritance, imports, structs, custom events, guard declarations and requirements, properties and groups, native/global functions, events, states, arrays, `new`, casts, qualified struct types, calls, control flow, and line continuation. The invalid fixture deliberately omits `EndIf` and must contain a Tree-sitter error or missing node.
+The valid fixtures cover scripts, inheritance, imports, structs, custom events, guard declarations and requirements, properties and groups, native/global functions, events, states, arrays, `new`, casts, qualified struct types, calls, control flow, and line continuation. Regression coverage also verifies files without a final newline, bare and parenthesized guard lists, guarded properties with `RequiresGuard` before `Auto`, semicolons at the start of concatenated string segments, and rejection of same-line declarations. The invalid fixture deliberately omits `EndIf` and must contain a Tree-sitter error or missing node.
+
+The installed-source audit reads the local Starfield scripts in place and does not copy Bethesda source files into this repository.
 
 ## Manual Zed acceptance checklist
 

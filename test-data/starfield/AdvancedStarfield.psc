@@ -18,6 +18,7 @@ Guard LogicGuard ProtectsFunctionLogic
 Int GuardedCount RequiresGuard(DataGuard)
 WorkItem[] Property PendingWork Auto Mandatory RequiresGuard(DataGuard)
 ActorValue:ActorValueInfo Property CurrentInfo Auto
+Int Property GuardedProperty RequiresGuard (DataGuard) Auto Conditional
 
 Group Configuration CollapsedOnRef
     Bool Property EnableTracing = True Auto
@@ -27,7 +28,7 @@ EndGroup
 Int Function GetVersion() Global Native
 
 Function UpdateCount(Int aiAmount) RequiresGuard(LogicGuard)
-    LockGuard DataGuard
+    LockGuard(DataGuard)
         GuardedCount += aiAmount
     EndLockGuard
 EndFunction
@@ -43,7 +44,7 @@ Bool Function TryQueue(WorkItem akWork, \
             Return True
         EndIf
     Else
-        Debug.Trace("Data guard is already locked")
+        Debug.Trace("Data guard is already locked; skipping work")
     EndTryLockGuard
 
     Return False
