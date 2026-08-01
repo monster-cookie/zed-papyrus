@@ -10,7 +10,7 @@ Results recorded on Windows x64 on 2026-07-31:
 | --- | --- | --- |
 | `npm run grammar:generate` | Pass | Generated parser reports Tree-sitter `LANGUAGE_VERSION 15`. |
 | `npm run grammar:build` | Pass | Created `grammar/papyrus.wasm` using Tree-sitter CLI 0.26.11. |
-| `npm run grammar:test` | Pass | Parsed two valid and one invalid original fixtures, checked 16 required Starfield node types, and compiled six Zed queries. |
+| `npm run grammar:test` | Pass | Parsed two valid and one invalid original fixtures, checked 17 required Starfield node types, and compiled six Zed queries. |
 | `npm run grammar:test:native` | Pass | Both native Tree-sitter corpus cases passed: declarations/members and Starfield guard blocks. |
 
 The valid fixtures cover scripts, inheritance, imports, structs, custom events, guard declarations and requirements, properties and groups, native/global functions, events, states, arrays, `new`, casts, qualified struct types, calls, control flow, and line continuation. The invalid fixture deliberately omits `EndIf` and must contain a Tree-sitter error or missing node.
@@ -28,7 +28,7 @@ Results observed in Zed Preview on Windows on 2026-07-31:
 | Toggle `;` comments | Not run | Manual acceptance remains. |
 | Verify indentation for functions, conditions, states, structs, and guard blocks | Not run | Manual acceptance remains. |
 | Verify bracket matching | Not run | Manual acceptance remains. |
-| Inspect the invalid fixture in Zed's syntax tree | Not run | Tree-sitter errors are structural nodes, not LSP diagnostics. |
+| Inspect the invalid fixture in Zed's syntax tree | Pass | Zed displayed `ERROR [3:1-7:1]` across the function containing the unclosed `If`; Tree-sitter does not emit a human-readable diagnostic. |
 
 Use `dev: open highlights tree view` to inspect grammar captures and syntax-tree error nodes.
 

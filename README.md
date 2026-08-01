@@ -9,7 +9,7 @@ The initial release deliberately focuses on portable, dependency-light language 
 - `.psc` file recognition;
 - syntax highlighting;
 - line comments;
-- indentation and bracket matching;
+- indentation and matching/autoclose for parentheses, square brackets, documentation-comment braces, and quotes;
 - outline symbols;
 - Vim text objects.
 

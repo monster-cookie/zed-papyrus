@@ -529,7 +529,7 @@ export default grammar({
 
     line_comment: _ => token(seq(';', /[^\r\n]*/)),
     block_comment: _ => token(seq(';/', repeat(choice(/[^/]/, /\/[^;]/)), '/;')),
-    documentation_comment: _ => token(seq('{', repeat(/[^}]/), '}')),
+    documentation_comment: _ => seq('{', optional(token.immediate(/[^}]+/)), '}'),
     line_continuation: _ => token(seq('\\', /[ \t]*/, /\r?\n/)),
     newline: _ => /\r?\n/,
     identifier: _ => /[A-Za-z_][A-Za-z0-9_]*/,

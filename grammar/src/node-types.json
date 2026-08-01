@@ -720,6 +720,12 @@
     }
   },
   {
+    "type": "documentation_comment",
+    "named": true,
+    "extra": true,
+    "fields": {}
+  },
+  {
     "type": "else_clause",
     "named": true,
     "fields": {},
@@ -3244,11 +3250,6 @@
     "named": false
   },
   {
-    "type": "documentation_comment",
-    "named": true,
-    "extra": true
-  },
-  {
     "type": "else",
     "named": false
   },
@@ -3475,7 +3476,15 @@
     "named": false
   },
   {
+    "type": "{",
+    "named": false
+  },
+  {
     "type": "||",
+    "named": false
+  },
+  {
+    "type": "}",
     "named": false
   }
 ]

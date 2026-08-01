@@ -13,6 +13,7 @@ const requiredNodeTypes = new Set([
   "array_type_suffix",
   "cast_expression",
   "custom_event_declaration",
+  "documentation_comment",
   "event_definition",
   "function_definition",
   "group_declaration",

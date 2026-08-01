@@ -3922,27 +3922,32 @@
       }
     },
     "documentation_comment": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "{"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "PATTERN",
-              "value": "[^}]"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "[^}]+"
+              }
+            },
+            {
+              "type": "BLANK"
             }
-          },
-          {
-            "type": "STRING",
-            "value": "}"
-          }
-        ]
-      }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
     },
     "line_continuation": {
       "type": "TOKEN",
