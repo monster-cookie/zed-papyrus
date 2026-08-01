@@ -1,0 +1,100 @@
+import { readFile, readdir } from "node:fs/promises";
+import path from "node:path";
+import process from "node:process";
+import { Language, Parser } from "web-tree-sitter";
+
+const repositoryRoot = path.resolve(import.meta.dirname, "..");
+const grammarPath = path.join(repositoryRoot, "grammar", "papyrus.wasm");
+const validFixturePath = path.join(repositoryRoot, "test-data", "starfield");
+const invalidFixturePath = path.join(repositoryRoot, "test-data", "invalid");
+
+const requiredNodeTypes = new Set([
+  "array_type_suffix",
+  "cast_expression",
+  "custom_event_declaration",
+  "event_definition",
+  "function_definition",
+  "group_declaration",
+  "guard_declaration",
+  "line_continuation",
+  "lock_guard_statement",
+  "new_expression",
+  "auto_property_definition",
+  "qualified_identifier",
+  "script_declaration",
+  "state_declaration",
+  "struct_declaration",
+  "try_lock_guard_statement",
+]);
+
+async function papyrusFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const entryPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await papyrusFiles(entryPath));
+    } else if (entry.isFile() && path.extname(entry.name).toLowerCase() === ".psc") {
+      files.push(entryPath);
+    }
+  }
+
+  return files.sort();
+}
+
+function collectNodeTypes(node, nodeTypes) {
+  nodeTypes.add(node.type);
+  for (const child of node.children) {
+    collectNodeTypes(child, nodeTypes);
+  }
+}
+
+await Parser.init();
+const language = await Language.load(grammarPath);
+const parser = new Parser();
+parser.setLanguage(language);
+
+const failures = [];
+const observedNodeTypes = new Set();
+const validFiles = await papyrusFiles(validFixturePath);
+const invalidFiles = await papyrusFiles(invalidFixturePath);
+
+for (const filePath of validFiles) {
+  const source = await readFile(filePath, "utf8");
+  const tree = parser.parse(source);
+  collectNodeTypes(tree.rootNode, observedNodeTypes);
+
+  if (tree.rootNode.hasError) {
+    failures.push(`${path.relative(repositoryRoot, filePath)} unexpectedly contains an ERROR or MISSING node:\n${tree.rootNode}`);
+  }
+
+  tree.delete();
+}
+
+for (const filePath of invalidFiles) {
+  const source = await readFile(filePath, "utf8");
+  const tree = parser.parse(source);
+
+  if (!tree.rootNode.hasError) {
+    failures.push(`${path.relative(repositoryRoot, filePath)} was expected to contain a syntax error.`);
+  }
+
+  tree.delete();
+}
+
+for (const nodeType of requiredNodeTypes) {
+  if (!observedNodeTypes.has(nodeType)) {
+    failures.push(`The valid fixtures did not exercise the ${nodeType} node.`);
+  }
+}
+
+parser.delete();
+
+if (failures.length > 0) {
+  console.error(failures.join("\n\n"));
+  process.exitCode = 1;
+} else {
+  console.log(`Parsed ${validFiles.length} valid and ${invalidFiles.length} invalid Papyrus fixtures successfully.`);
+  console.log(`Verified ${requiredNodeTypes.size} required Starfield grammar node types.`);
+}

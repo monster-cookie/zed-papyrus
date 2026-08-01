@@ -1,0 +1,38 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "papyrus",
+      "camelcase": "Papyrus",
+      "title": "Papyrus",
+      "scope": "source.papyrus",
+      "path": ".",
+      "file-types": ["psc"],
+      "injection-regex": "^papyrus$",
+      "class-name": "TreeSitterPapyrus"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "GPL-3.0-or-later",
+    "description": "Starfield-first Tree-sitter grammar for Bethesda Papyrus",
+    "authors": [
+      {
+        "name": "monster-cookie",
+        "url": "https://github.com/monster-cookie"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/monster-cookie/zed-papyrus"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": false,
+    "node": false,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}
