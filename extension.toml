@@ -8,5 +8,5 @@ repository = "https://github.com/monster-cookie/zed-papyrus"
 
 [grammars.papyrus]
 repository = "https://github.com/monster-cookie/zed-papyrus"
-rev = "6acf139cda738014f37fca2325248bbe77f0c811"
+rev = "40b76cf14aa3abde9fe421b41e605cd9a3471414"
 path = "grammar"
