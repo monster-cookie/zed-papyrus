@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "extension:test": "node scripts/test-extension.mjs",
     "grammar:generate": "tree-sitter generate --abi 15 --output grammar/src grammar/grammar.js",
     "grammar:build": "tree-sitter build --wasm grammar --output grammar/papyrus.wasm",
     "grammar:test": "node scripts/test-grammar.mjs",

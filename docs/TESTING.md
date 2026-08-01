@@ -18,6 +18,19 @@ The valid fixtures cover scripts, inheritance, imports, structs, custom events, 
 
 The installed-source audit reads the local Starfield scripts in place and does not copy Bethesda source files into this repository.
 
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on Ubuntu for pull requests targeting `master`, pushes to `master`, and manual dispatches. The workflow uses read-only repository permissions and Node.js 24 to:
+
+1. install the exact development dependencies from `package-lock.json`;
+2. validate the extension manifest, grammar pin, license, language assets, and required package scripts;
+3. regenerate the committed ABI-15 parser and reject generated-artifact drift;
+4. build the WebAssembly grammar;
+5. run the fixture and Zed-query checks;
+6. run the native Tree-sitter corpus.
+
+The workflow does not publish releases, use repository secrets, or access installed game files. The authoritative Starfield corpus remains a local release-validation check because Bethesda source files are not redistributed with this project.
+
 ## Manual Zed acceptance checklist
 
 Results observed in Zed Preview on Windows on 2026-07-31:
@@ -42,6 +55,7 @@ Use `dev: open highlights tree view` to inspect grammar captures and syntax-tree
 
 ```powershell
 npm install
+npm run extension:test
 npm run grammar:generate
 npm run grammar:build
 npm run grammar:test
