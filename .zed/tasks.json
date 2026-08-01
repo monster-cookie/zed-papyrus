@@ -1,0 +1,34 @@
+[
+  {
+    "label": "Papyrus: install grammar dependencies",
+    "command": "npm",
+    "args": ["install"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "all",
+    "use_new_terminal": false
+  },
+  {
+    "label": "Papyrus: generate ABI-15 grammar",
+    "command": "npm",
+    "args": ["run", "grammar:generate"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "all",
+    "use_new_terminal": false
+  },
+  {
+    "label": "Papyrus: build grammar WASM",
+    "command": "npm",
+    "args": ["run", "grammar:build"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "all",
+    "use_new_terminal": false
+  },
+  {
+    "label": "Papyrus: test grammar and queries",
+    "command": "npm",
+    "args": ["run", "grammar:test"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "save": "all",
+    "use_new_terminal": false
+  }
+]

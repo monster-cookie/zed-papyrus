@@ -1,0 +1,12 @@
+id = "papyrus"
+name = "Papyrus"
+version = "0.1.0"
+schema_version = 1
+authors = ["monster-cookie"]
+description = "Starfield-first Bethesda Papyrus syntax support with an original Tree-sitter grammar"
+repository = "https://github.com/monster-cookie/zed-papyrus"
+
+[grammars.papyrus]
+repository = "https://github.com/monster-cookie/zed-papyrus"
+rev = "6acf139cda738014f37fca2325248bbe77f0c811"
+path = "grammar"

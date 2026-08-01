@@ -2,7 +2,6 @@
 /target/
 /grammar/papyrus.wasm
 /grammars/
-/*.wasm
 *.log
 .DS_Store
 Thumbs.db

@@ -1,12 +1,13 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import { Language, Parser } from "web-tree-sitter";
+import { Language, Parser, Query } from "web-tree-sitter";
 
 const repositoryRoot = path.resolve(import.meta.dirname, "..");
 const grammarPath = path.join(repositoryRoot, "grammar", "papyrus.wasm");
 const validFixturePath = path.join(repositoryRoot, "test-data", "starfield");
 const invalidFixturePath = path.join(repositoryRoot, "test-data", "invalid");
+const queryPath = path.join(repositoryRoot, "languages", "papyrus");
 
 const requiredNodeTypes = new Set([
   "array_type_suffix",
@@ -59,6 +60,10 @@ const failures = [];
 const observedNodeTypes = new Set();
 const validFiles = await papyrusFiles(validFixturePath);
 const invalidFiles = await papyrusFiles(invalidFixturePath);
+const queryFiles = (await readdir(queryPath, { withFileTypes: true }))
+  .filter((entry) => entry.isFile() && path.extname(entry.name) === ".scm")
+  .map((entry) => path.join(queryPath, entry.name))
+  .sort();
 
 for (const filePath of validFiles) {
   const source = await readFile(filePath, "utf8");
@@ -89,6 +94,16 @@ for (const nodeType of requiredNodeTypes) {
   }
 }
 
+for (const filePath of queryFiles) {
+  const source = await readFile(filePath, "utf8");
+  try {
+    const query = new Query(language, source);
+    query.delete();
+  } catch (error) {
+    failures.push(`${path.relative(repositoryRoot, filePath)} is not a valid query: ${error}`);
+  }
+}
+
 parser.delete();
 
 if (failures.length > 0) {
@@ -97,4 +112,5 @@ if (failures.length > 0) {
 } else {
   console.log(`Parsed ${validFiles.length} valid and ${invalidFiles.length} invalid Papyrus fixtures successfully.`);
   console.log(`Verified ${requiredNodeTypes.size} required Starfield grammar node types.`);
+  console.log(`Compiled ${queryFiles.length} Zed Tree-sitter queries successfully.`);
 }

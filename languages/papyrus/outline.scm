@@ -1,0 +1,12 @@
+(script_declaration name: (_) @name) @item
+(struct_declaration name: (identifier) @name) @item
+(group_declaration name: (identifier) @name) @item
+(property_definition name: (identifier) @name) @item
+(auto_property_definition name: (identifier) @name) @item
+(state_declaration name: (identifier) @name) @item
+(function_definition name: (identifier) @name) @item
+(native_function_declaration name: (identifier) @name) @item
+(event_definition name: (identifier) @name) @item
+(native_event_declaration name: (identifier) @name) @item
+(custom_event_declaration name: (identifier) @name) @item
+(guard_declaration name: (identifier) @name) @item
