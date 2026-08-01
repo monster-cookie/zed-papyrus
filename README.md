@@ -42,7 +42,7 @@ The repository's `.zed/tasks.json` exposes the same install, generate, build, an
 
 The grammar is pinned by `extension.toml` to an immutable commit in this repository. If the grammar changes, publish the grammar commit first and update the manifest revision in a later commit.
 
-See the [implementation plan](docs/IMPLEMENTATION-PLAN.md), [testing record](docs/TESTING.md), and [troubleshooting guide](docs/TROUBLESHOOTING.md).
+See the [implementation plan](docs/IMPLEMENTATION-PLAN.md), [testing record](docs/TESTING.md), [known issues and deferred work](KNOWN-ISSUES.md), and [troubleshooting guide](docs/TROUBLESHOOTING.md).
 
 ## Compatibility
 
