@@ -11,7 +11,7 @@ The initial release deliberately focuses on portable, dependency-light language 
 - line comments;
 - indentation and matching/autoclose for parentheses, square brackets, documentation-comment braces, and quotes;
 - outline symbols;
-- Vim text objects.
+- Vim text-object queries, which compile successfully but have not been manually validated in Vim mode.
 
 The grammar directly models modern Starfield structures, including structs, custom events, groups, properties, functions and events, states, arrays, casts, qualified struct types, line continuations, and guard constructs. Compiled `.pex` files are deliberately not associated with the language.
 

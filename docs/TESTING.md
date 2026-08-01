@@ -24,11 +24,14 @@ Results observed in Zed Preview on Windows on 2026-07-31:
 | Install the repository with **Install Dev Extension** | Pass | Zed installed the development extension. |
 | Open `test-data/starfield/BasicStarfield.psc` and confirm language is Papyrus | Pass | Zed identified the buffer as Papyrus. |
 | Inspect Tree-sitter highlighting | Pass | Papyrus syntax categories were visibly highlighted. |
+| Inspect `test-data/starfield/AdvancedStarfield.psc` highlighting | Pass | Advanced Starfield structures highlighted as expected. |
 | Verify outline items | Pass | The outline displayed Papyrus symbols. |
-| Toggle `;` comments | Not run | Manual acceptance remains. |
-| Verify indentation for functions, conditions, states, structs, and guard blocks | Not run | Manual acceptance remains. |
-| Verify bracket matching | Not run | Manual acceptance remains. |
+| Toggle `;` comments with `Ctrl+/` | Pass | Comment and uncomment worked as expected. |
+| Verify indentation for functions, conditions, states, structs, and guard blocks | Pass | Inner indentation and closing-keyword dedentation behaved as expected. |
+| Verify bracket matching and autoclose | Pass | Parentheses, square brackets, quotes, and documentation-comment braces behaved as expected. |
 | Inspect the invalid fixture in Zed's syntax tree | Pass | Zed displayed `ERROR [3:1-7:1]` across the function containing the unclosed `If`; Tree-sitter does not emit a human-readable diagnostic. |
+| Run `Papyrus: test grammar and queries` from Zed's task picker | Pass | The task parsed two valid and one invalid fixture, verified 17 required node types, compiled six queries, and finished successfully. |
+| Verify Vim text objects | Not run | Deferred because Vim mode is a global editor setting; the text-object query compiles successfully but has not been exercised manually. |
 
 Use `dev: open highlights tree view` to inspect grammar captures and syntax-tree error nodes.
 
