@@ -14,7 +14,7 @@ These rules apply throughout the repository.
 
 ## Repo-wide safety rules
 
-- Never run Git commands unless the user explicitly asks for a specific Git action.
+- See the Git/GitHub boundries section below for what you can and cannot do with Git and GitHub.
 - Never modify repository history, create commits, create branches, open pull requests, push, pull, fetch, merge, rebase, tag, stash, or reset unless explicitly requested.
 - Never edit `AGENTS.md`, `AGENTS.override.md`, `AGENT-PLAN-TEMPLATE.md`, or other agent-instruction files directly. Propose the changes and wait for explicit approval.
 - Keep changes surgical and consistent with existing patterns and naming.
@@ -23,6 +23,37 @@ These rules apply throughout the repository.
 - Do not claim build, test, packaging, migration, import, or validation success unless the command actually ran successfully.
 - If validation cannot run, report the exact command, the failure or blocker, and whether it appears environmental.
 - Do not add secrets, credentials, tokens, connection strings, private keys, personal paths, or machine-specific data to source files, documentation, test fixtures, logs, generated output, or workflow files.
+
+## Git and GitHub boundaries
+
+- Clearly read-only Git and GitHub inspection commands are allowed without case-by-case approval when needed to understand repository state, history, tracked files, CI results, pull requests, or repository configuration.
+- Permitted read-only Git commands include:
+  - `git status`
+  - `git diff`
+  - `git log`
+  - `git show`
+  - `git blame`
+  - `git ls-files`
+  - `git rev-list`
+  - `git rev-parse`
+  - `git cat-file`
+  - `git grep`
+  - `git remote -v`
+  - `git submodule status`
+- Permitted read-only GitHub operations include repository, workflow-run, check, issue, pull-request, ruleset, branch-protection, and security-setting queries. GitHub API calls must use read-only methods such as `GET`.
+- The agent must never perform Git or GitHub operations that create, modify, delete, publish, synchronize, or rewrite local or remote repository state. The user performs all such operations.
+- Prohibited operations include:
+  - staging or committing changes;
+  - creating, deleting, or switching branches;
+  - creating, updating, merging, or closing pull requests;
+  - pushing, pulling, or fetching;
+  - merging, rebasing, cherry-picking, reverting, or resetting;
+  - creating or deleting tags;
+  - creating, applying, or deleting stashes;
+  - restoring or checking out files;
+  - changing remotes, repository configuration, hooks, worktrees, or submodules;
+  - modifying GitHub repository settings, releases, issues, workflows, secrets, rulesets, or branch protection.
+- If a command is not clearly read-only, stop and ask the user to perform it.
 
 ## Planning requirements
 
