@@ -62,11 +62,11 @@ Results recorded on Windows x64 on 2026-08-02 using a locally built release exec
 | Zed presentation | Pass | The editor underline, hover message, and diagnostics view displayed the human-readable diagnostic. |
 | Process restart | Pass | The configured server relaunched and diagnostics remained functional after restarting Zed. |
 
-This completes Windows local-binary diagnostic acceptance. Automatic-download acceptance remains separate and pending the first server release.
+This completes Windows local-binary diagnostic acceptance. Automatic-download acceptance remains separate and pending a clean Zed download test.
 
 ## Automatic-download acceptance
 
-After the `papyrus-language-server` `v0.1.0` release publishes all four archives:
+The `papyrus-language-server` `v0.1.0` workflow successfully published all four native archives and matching checksum files on 2026-08-02. Complete the remaining acceptance steps as follows:
 
 1. Remove the configured binary override and ensure the server is not on Zed's `PATH`.
 2. Remove the extension's downloaded server work directory or reinstall the development extension.

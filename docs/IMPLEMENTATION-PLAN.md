@@ -23,7 +23,7 @@ The abandoned third-party `Papyrus-Lsp` prototype is not used. The replacement i
 - original editor-validation fixtures and tests;
 - Zed-specific installation, testing, and release documentation.
 
-The grammar manifest and Rust development dependency are both pinned to `fdf32993ed9331e8731180fa50281abc12344083`.
+The grammar manifest and Rust development dependency are both pinned to release commit `f4baf7da54ed6fca79ff81ae211b3364282630b6`.
 
 ## Dependencies and licenses
 
@@ -64,7 +64,7 @@ Native grammar corpus generation and exact-tree tests remain in the canonical la
 
 ## Risks and mitigations
 
-- **Unpublished automatic download:** use a configured local binary until `v0.1.0` is published, then run the clean-download acceptance test.
+- **Automatic-download regression:** retain local-binary resolution as a fallback and run the clean-download acceptance test against the published `v0.1.0` assets.
 - **Platform mismatch:** maintain an explicit allow-list that matches the release workflow's four artifacts.
 - **Grammar drift:** use the same immutable revision in the manifest and Cargo dependency.
 - **Duplicate ownership:** reject retired local grammar and Node-toolchain files in the manifest test.
@@ -75,9 +75,9 @@ Native grammar corpus generation and exact-tree tests remain in the canonical la
 
 1. Cross-dialect canonical grammar and installed-source audits — complete.
 2. Native Rust diagnostic server with human-readable missing closers — complete in `papyrus-language-server`.
-3. Zed Rust adapter and canonical grammar consumption — implemented; automated validation pending the final release command pass.
-4. Local-binary Windows Zed diagnostic acceptance — pending.
-5. `papyrus-language-server` `v0.1.0` four-platform release — pending user-created tag and release workflow.
-6. Clean automatic-download Windows Zed acceptance — pending the server release.
+3. Zed Rust adapter and canonical grammar consumption — implemented; automated validation pending the final release-pin command pass.
+4. Local-binary Windows Zed diagnostic acceptance — complete.
+5. `papyrus-language-server` `v0.1.0` four-platform release — complete.
+6. Clean automatic-download Windows Zed acceptance — pending.
 7. Initial Zed marketplace submission — pending release acceptance.
 

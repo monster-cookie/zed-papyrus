@@ -15,7 +15,7 @@ zed_extension_api = "0.7.0"
 [dev-dependencies]
 toml = "1.1"
 tree-sitter = "0.26.11"
-tree-sitter-papyrus = { git = "https://github.com/monster-cookie/papyrus-language-server", rev = "fdf32993ed9331e8731180fa50281abc12344083" }
+tree-sitter-papyrus = { git = "https://github.com/monster-cookie/papyrus-language-server", rev = "f4baf7da54ed6fca79ff81ae211b3364282630b6" }
 
 [lints.clippy]
 dbg_macro = "deny"

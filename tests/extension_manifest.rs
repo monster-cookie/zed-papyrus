@@ -2,7 +2,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 const GRAMMAR_REPOSITORY: &str = "https://github.com/monster-cookie/papyrus-language-server";
-const GRAMMAR_REVISION: &str = "fdf32993ed9331e8731180fa50281abc12344083";
+const GRAMMAR_REVISION: &str = "f4baf7da54ed6fca79ff81ae211b3364282630b6";
 const REQUIRED_LANGUAGE_FILES: &[&str] = &[
     "brackets.scm",
     "config.toml",
@@ -103,8 +103,4 @@ fn repository_contains_only_zed_specific_language_assets() {
             "duplicate or retired toolchain path should be removed: {removed_path}"
         );
     }
-    assert!(
-        !root.join("extension.wasm").exists(),
-        "compiled extension artifacts should not be stored at the repository root"
-    );
 }

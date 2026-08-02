@@ -4,7 +4,7 @@
 
 - Added the native Rust Zed adapter for `papyrus-language-server` syntax diagnostics.
 - Added configured-path, worktree `PATH`, and pinned `v0.1.0` release resolution for Windows x64, Linux x64, macOS Intel, and macOS Apple Silicon versions of `papyrus-language-server`.
-- Moved canonical grammar ownership to `papyrus-language-server` at immutable revision `fdf32993ed9331e8731180fa50281abc12344083`.
+- Moved canonical grammar ownership to `papyrus-language-server` at immutable release revision `f4baf7da54ed6fca79ff81ae211b3364282630b6`.
 - Replaced the duplicate grammar and Node development toolchain with Rust fixture, query, manifest, and platform-mapping tests.
 - Added Cargo-based Zed tasks and Linux CI validation for formatting, Clippy, tests, and the `wasm32-wasip2` extension target.
 - Added an original ABI-15 Starfield-first Papyrus grammar, including guard constructs.
