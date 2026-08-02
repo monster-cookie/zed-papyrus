@@ -1,0 +1,62 @@
+==================
+Line and documentation comments
+==================
+
+ScriptName CommentFixture
+; ordinary line comment
+{ordinary documentation comment}
+{; documentation comment beginning with a semicolon}
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (identifier))
+  (newline)
+  (line_comment)
+  (newline)
+  (documentation_comment)
+  (newline)
+  (documentation_comment)
+  (newline))
+
+==================
+Canonical and slash-adjacent block comments
+==================
+
+ScriptName BlockCommentFixture
+;/ canonical block comment /;
+;//
+Function IgnoredByTheParser()
+EndFunction
+//;
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (identifier))
+  (newline)
+  (block_comment)
+  (newline)
+  (block_comment)
+  (newline))
+
+==================
+Unterminated documentation comment
+==================
+
+ScriptName UnterminatedDocumentationComment
+{missing closer
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (identifier))
+  (newline)
+  (documentation_comment
+    (MISSING "}")))

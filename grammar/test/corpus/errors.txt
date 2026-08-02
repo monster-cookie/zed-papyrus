@@ -1,0 +1,133 @@
+==================
+Missing EndIf
+==================
+
+ScriptName MissingEndIf
+Function Run(Int value)
+    If value > 0
+        Return
+EndFunction
+
+---
+
+(ERROR
+  (newline)
+  (script_declaration
+    (identifier))
+  (newline)
+  (identifier)
+  (parameters
+    (parameter
+      (type
+        (builtin_type))
+      (identifier)))
+  (newline)
+  (binary_expression
+    (identifier)
+    (integer))
+  (newline)
+  (return_statement)
+  (newline)
+  (expression_statement
+    (identifier))
+  (newline))
+
+==================
+Missing Skyrim EndState
+==================
+
+ScriptName MissingEndState
+State Waiting
+    Event OnBeginState()
+    EndEvent
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (identifier))
+  (newline)
+  (state_declaration
+    (identifier)
+    (newline)
+    (event_definition
+      (identifier)
+      (parameters)
+      (newline))
+    (newline)
+    (MISSING "endstate")))
+
+==================
+Missing Fallout 4 EndStruct
+==================
+
+ScriptName ZedPapyrus:MissingEndStruct
+Struct Entry
+    String Name
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (qualified_identifier
+      (identifier)
+      (identifier)))
+  (newline)
+  (struct_declaration
+    (identifier)
+    (newline)
+    (struct_member
+      (type
+        (builtin_type))
+      (identifier))
+    (newline)
+    (MISSING "endstruct")))
+
+==================
+Same-line declarations
+==================
+
+ScriptName First ScriptName Second
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (identifier))
+  (MISSING newline)
+  (script_declaration
+    (identifier))
+  (newline))
+
+==================
+Malformed parameter list
+==================
+
+ScriptName MalformedParameters
+Function Run(Int first,, String second)
+EndFunction
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (identifier))
+  (newline)
+  (function_definition
+    (identifier)
+    (parameters
+      (parameter
+        (type
+          (builtin_type))
+        (identifier))
+      (ERROR)
+      (parameter
+        (type
+          (builtin_type))
+        (identifier)))
+    (newline))
+  (newline))

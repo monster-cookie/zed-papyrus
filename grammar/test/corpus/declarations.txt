@@ -11,6 +11,7 @@ Struct Entry
 EndStruct
 
 CustomEvent Changed
+Event OnNativeSignal() Native
 Guard DataGuard
 Int Value RequiresGuard(DataGuard)
 Actor Property Owner Auto Mandatory
@@ -48,6 +49,10 @@ Int Property GuardedValue RequiresGuard (DataGuard) Auto Conditional
   (newline)
   (custom_event_declaration
     name: (identifier))
+  (newline)
+  (native_event_declaration
+    name: (identifier)
+    parameters: (parameters))
   (newline)
   (guard_declaration
     name: (identifier))
