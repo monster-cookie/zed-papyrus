@@ -1,9 +1,9 @@
 # Changelog
 
-## Unreleased
+## Version 0.1.0 (August 2nd, 2026)
 
 - Added the native Rust Zed adapter for `papyrus-language-server` syntax diagnostics.
-- Added configured-path, worktree `PATH`, and pinned `v0.1.0` release resolution for Windows x64, Linux x64, macOS Intel, and macOS Apple Silicon.
+- Added configured-path, worktree `PATH`, and pinned `v0.1.0` release resolution for Windows x64, Linux x64, macOS Intel, and macOS Apple Silicon versions of `papyrus-language-server`.
 - Moved canonical grammar ownership to `papyrus-language-server` at immutable revision `fdf32993ed9331e8731180fa50281abc12344083`.
 - Replaced the duplicate grammar and Node development toolchain with Rust fixture, query, manifest, and platform-mapping tests.
 - Added Cargo-based Zed tasks and Linux CI validation for formatting, Clippy, tests, and the `wasm32-wasip2` extension target.
@@ -16,4 +16,3 @@
 - Added whole-fixture concrete-node coverage and execution checks for every declared Zed query capture.
 - Fixed documentation comments beginning with a semicolon and multiline comments with slash-adjacent closing delimiters.
 - Validated the grammar against the complete locally installed Starfield, Skyrim Anniversary Edition, and Fallout 4 vanilla source corpora.
-- Replaced the rejected third-party `Papyrus-Lsp` prototype with the original cross-dialect diagnostic server.
