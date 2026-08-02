@@ -1,70 +1,83 @@
 # Testing
 
-This record separates automated grammar validation from manual Zed acceptance. Configuration alone is not treated as evidence that a feature works.
+This record separates automated extension validation, canonical grammar evidence, and manual Zed acceptance. Configuration alone is not treated as evidence that a feature works.
 
-## Automated results
+## Current automated extension results
 
 Results recorded on Windows x64 on 2026-08-01:
 
 | Check | Result | Evidence |
 | --- | --- | --- |
-| `npm run extension:test` | Pass | Validated the extension manifest, grammar pin, license, language assets, and CI package scripts. |
-| `npm run grammar:generate` | Pass | Generated parser reports Tree-sitter `LANGUAGE_VERSION 15`. |
-| `npm run grammar:build` | Pass | Created `grammar/papyrus.wasm` using Tree-sitter CLI 0.26.11. |
-| `npm run grammar:test` | Pass | Parsed two valid and one invalid original fixture for each of Starfield, Skyrim, and Fallout 4; validated two inline regression cases; covered 55 concrete named grammar nodes; and exercised all 30 declared capture names across six Zed queries. |
-| `npm run grammar:test:native` | Pass | All 14 exact-tree corpus cases passed across comments, declarations, Skyrim and Fallout 4 dialect syntax, representative errors, expressions, Starfield guards, and statements. The two concrete nodes not exercised by whole-file fixtures are covered here. |
-| Installed Starfield source audit | Pass | Recursively parsed 5,086 `.psc` files with zero `ERROR` and zero `MISSING` nodes, including 3,331 files under `Fragments`. |
-| Installed Skyrim Anniversary Edition source audit | Pass | Recursively parsed 14,301 `.psc` files with zero `ERROR` and zero `MISSING` nodes, including 10,437 generated fragment scripts stored in the flat source layout. |
-| Installed Fallout 4 vanilla source audit | Pass | Recursively parsed 10,282 unique Base, Creation Club, and DLC `.psc` files with zero `ERROR` and zero `MISSING` nodes, including 7,138 files under `Fragments`. The full 10,689-file extracted tree, including existing F4SE, mod, and user sources, also parsed cleanly. |
+| `cargo test` | Pass | Two adapter tests, two manifest/ownership tests, and two grammar/query tests passed. |
+| `cargo clippy --locked --all-targets -- -D warnings` | Pass | The extension and all test targets compiled without Clippy warnings. |
+| `cargo fmt --all -- --check` | Pass | All Rust source and tests match `rustfmt`. |
+| `cargo test --locked` | Pass | All six tests and documentation tests passed against `Cargo.lock`. |
+| `cargo check --locked --target wasm32-wasip2` | Pass | The adapter compiled successfully for Zed's WebAssembly target. |
 
-The valid fixtures cover scripts, inheritance, imports, structs, custom events, guard declarations and requirements, properties and groups, native/global functions, events, states, arrays, `new`, casts and type tests, qualified struct types, calls, expressions, control flow, line continuation, and all three comment forms. Regression coverage also verifies files without a final newline, bare and parenthesized guard lists, guarded properties with `RequiresGuard` before `Auto`, semicolons at the start of concatenated string segments, documentation comments whose content begins with a semicolon, slash-adjacent multiline-comment delimiters, and all declared Zed query captures.
+The grammar/query test parses two valid and one invalid fixture for each of Starfield, Skyrim, and Fallout 4. It also validates inline regressions, enforces concrete named grammar-node coverage, compiles all six Zed Tree-sitter queries, and exercises every declared capture.
 
-The Starfield invalid fixture omits `EndIf`; the Skyrim fixture omits `EndState`; and the Fallout 4 fixture omits `EndStruct`. The test harness requires the expected `ERROR` or `MISSING` node for each dialect. Native corpus tests additionally isolate malformed parameter lists, same-line declarations, and an unterminated documentation comment with exact expected syntax trees.
+The manifest test confirms the extension and Cargo versions match, the grammar is pinned to the canonical language-server commit, the language server is registered for Papyrus, all Zed language assets exist, and the retired duplicate grammar/Node toolchain is absent.
 
-The installed-source audits read local game scripts in place and do not copy Bethesda source files into this repository. Only original synthetic fixtures are committed.
+## Canonical grammar and source-audit evidence
 
-## Continuous integration
+The following validation was completed before grammar ownership moved to `papyrus-language-server`:
 
-`.github/workflows/ci.yml` runs on Ubuntu for pull requests targeting `master`, pushes to `master`, and manual dispatches. The workflow uses read-only repository permissions and Node.js 24 to:
-
-1. install the exact development dependencies from `package-lock.json`;
-2. validate the extension manifest, grammar pin, license, language assets, and required package scripts;
-3. regenerate the committed ABI-15 parser and reject generated-artifact drift;
-4. build the WebAssembly grammar;
-5. run the fixture and Zed-query checks;
-6. run the native Tree-sitter corpus.
-
-The workflow does not publish releases, use repository secrets, or access installed game files. The authoritative installed game corpora remain local release-validation checks because Bethesda source files are not redistributed with this project.
-
-## Manual Zed acceptance checklist
-
-Results observed in Zed Preview on Windows on 2026-07-31:
-
-| Test | Result | Observation |
+| Check | Result | Evidence |
 | --- | --- | --- |
-| Install the repository with **Install Dev Extension** | Pass | Zed installed the development extension. |
-| Open `test-data/starfield/BasicStarfield.psc` and confirm language is Papyrus | Pass | Zed identified the buffer as Papyrus. |
-| Inspect Tree-sitter highlighting | Pass | Papyrus syntax categories were visibly highlighted. |
-| Inspect `test-data/starfield/AdvancedStarfield.psc` highlighting | Pass | Advanced Starfield structures highlighted as expected. |
-| Verify outline items | Pass | The outline displayed Papyrus symbols. |
-| Toggle `;` comments with `Ctrl+/` | Pass | Comment and uncomment worked as expected. |
-| Verify indentation for functions, conditions, states, structs, and guard blocks | Pass | Inner indentation and closing-keyword dedentation behaved as expected. |
-| Verify bracket matching and autoclose | Pass | Parentheses, square brackets, quotes, and documentation-comment braces behaved as expected. |
-| Inspect the invalid fixture in Zed's syntax tree | Pass | Zed displayed `ERROR [3:1-7:1]` across the function containing the unclosed `If`; Tree-sitter does not emit a human-readable diagnostic. |
-| Run `Papyrus: test grammar and queries` from Zed's task picker | Pass | The original Starfield-only task completed successfully before the cross-dialect expansion. |
-| Re-run the expanded cross-dialect grammar task | Not run | The updated task now reports all three dialect suites, concrete-node coverage, and exercised query captures; manual Zed confirmation remains. |
-| Verify Vim text objects | Not run | Deferred because Vim mode is a global editor setting; the text-object query compiles successfully but has not been exercised manually. |
+| Installed Starfield source audit | Pass | Recursively parsed 5,086 `.psc` files with zero `ERROR` and zero `MISSING` nodes, including 3,331 files under `Fragments`. |
+| Installed Skyrim Anniversary Edition source audit | Pass | Recursively parsed 14,301 `.psc` files with zero `ERROR` and zero `MISSING` nodes, including 10,437 generated fragment scripts. |
+| Installed Fallout 4 vanilla source audit | Pass | Parsed 10,282 unique Base, Creation Club, and DLC `.psc` files cleanly, including 7,138 files under `Fragments`. |
 
-Use `dev: open highlights tree view` to inspect grammar captures and syntax-tree error nodes.
+The audits read local game scripts in place and did not copy Bethesda source into either repository. These results remain grammar evidence because the Zed extension pins the same canonical parser revision.
+
+The language-server repository additionally owns parser generation, WebAssembly fixture validation, native corpus tests, protocol-session tests, diagnostic-range tests, UTF-16 handling, and the human-readable missing-closer cases.
+
+## Existing manual syntax acceptance
+
+The grammar-only development extension previously passed these Windows Zed checks:
+
+- `.psc` recognition and Papyrus language selection;
+- Basic and Advanced fixture highlighting;
+- outline symbols;
+- `Ctrl+/` line-comment toggling;
+- indentation and closing-keyword dedentation;
+- parentheses, square brackets, quotes, and documentation-comment brace matching/autoclose;
+- task-picker execution of the grammar/query validation.
+
+Vim text objects remain untested manually because Vim mode is a global editor setting; the query and captures are validated automatically.
+
+## Diagnostic acceptance with a local server binary
+
+Before the server release exists:
+
+1. Build `papyrus-language-server` in release mode.
+2. Configure its absolute executable path under `lsp.papyrus-language-server.binary.path` in Zed settings.
+3. Reinstall this repository as a development extension.
+4. Open `test-data/invalid/InvalidSyntax.psc`.
+5. Confirm `Missing EndIf before EndFunction` appears without saving.
+6. Confirm hover and the diagnostics view show the message at `EndFunction`.
+7. Insert `EndIf` and confirm the diagnostic clears promptly.
+8. Reopen valid Starfield, Skyrim, and Fallout 4 fixtures and confirm no diagnostics appear.
+
+## Automatic-download acceptance
+
+After the `papyrus-language-server` `v0.1.0` release publishes all four archives:
+
+1. Remove the configured binary override and ensure the server is not on Zed's `PATH`.
+2. Remove the extension's downloaded server work directory or reinstall the development extension.
+3. Open a `.psc` file and confirm Zed reports download/install progress.
+4. Confirm the Windows x64 archive is selected, extracted, and launched directly.
+5. Repeat the invalid/valid diagnostic acceptance above.
+6. Confirm Linux x64 and both macOS assets build successfully in the language-server release workflow; manual Zed runtime testing on those hosts remains separate evidence.
 
 ## Release validation commands
 
 ```powershell
-npm install
-npm run extension:test
-npm run grammar:generate
-npm run grammar:build
-npm run grammar:test
-npm run grammar:test:native
-git diff --check
+rustup target add wasm32-wasip2
+cargo fmt --all -- --check
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked
+cargo check --locked --target wasm32-wasip2
 ```
+
+CI runs the same four Cargo checks on Ubuntu for pull requests targeting `master`, pushes to `master`, and manual dispatches. It uses read-only repository permissions and does not access installed game files or secrets.

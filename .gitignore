@@ -1,6 +1,5 @@
 /node_modules/
 /target/
-/grammar/papyrus.wasm
 /grammars/
 *.log
 .DS_Store

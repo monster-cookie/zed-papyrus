@@ -1,32 +1,32 @@
 [
   {
-    "label": "Papyrus: install grammar dependencies",
-    "command": "npm",
-    "args": ["install"],
+    "label": "Papyrus: format check",
+    "command": "cargo",
+    "args": ["fmt", "--all", "--", "--check"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "save": "all",
     "use_new_terminal": false
   },
   {
-    "label": "Papyrus: generate ABI-15 grammar",
-    "command": "npm",
-    "args": ["run", "grammar:generate"],
+    "label": "Papyrus: lint extension",
+    "command": "cargo",
+    "args": ["clippy", "--locked", "--all-targets", "--", "-D", "warnings"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "save": "all",
     "use_new_terminal": false
   },
   {
-    "label": "Papyrus: build grammar WASM",
-    "command": "npm",
-    "args": ["run", "grammar:build"],
+    "label": "Papyrus: test extension and grammar",
+    "command": "cargo",
+    "args": ["test", "--locked"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "save": "all",
     "use_new_terminal": false
   },
   {
-    "label": "Papyrus: test grammar and queries",
-    "command": "npm",
-    "args": ["run", "grammar:test"],
+    "label": "Papyrus: check Zed WebAssembly extension",
+    "command": "cargo",
+    "args": ["check", "--locked", "--target", "wasm32-wasip2"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "save": "all",
     "use_new_terminal": false

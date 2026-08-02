@@ -3,10 +3,14 @@ name = "Papyrus"
 version = "0.1.0"
 schema_version = 1
 authors = ["monster-cookie"]
-description = "Starfield-first Bethesda Papyrus syntax support with an original Tree-sitter grammar"
+description = "Bethesda Papyrus language support for Starfield, Skyrim, and Fallout 4"
 repository = "https://github.com/monster-cookie/zed-papyrus"
 
 [grammars.papyrus]
-repository = "https://github.com/monster-cookie/zed-papyrus"
-rev = "62643eabf9ea56bd3c4a2e90052128aa8f921c17"
+repository = "https://github.com/monster-cookie/papyrus-language-server"
+rev = "fdf32993ed9331e8731180fa50281abc12344083"
 path = "grammar"
+
+[language_servers.papyrus-language-server]
+name = "Papyrus Language Server"
+languages = ["Papyrus"]

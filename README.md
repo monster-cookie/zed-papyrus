@@ -1,21 +1,27 @@
-# Papyrus syntax support for Zed
+# Papyrus language support for Zed
 
-Starfield-first Bethesda Papyrus syntax support for [Zed](https://zed.dev/), powered by an original Tree-sitter grammar.
+Bethesda Papyrus language support for [Zed](https://zed.dev/), covering the dialects used by Starfield, Skyrim Anniversary Edition, and Fallout 4.
 
 ## Current status
 
-The initial release deliberately focuses on portable, dependency-light language definition features:
+The extension provides:
 
 - `.psc` file recognition;
 - syntax highlighting;
 - line, multiline, and documentation comments;
-- indentation and matching/autoclose for parentheses, square brackets, documentation-comment braces, and quotes;
+- indentation and closing-keyword dedentation;
+- bracket matching and autoclose;
 - outline symbols;
-- Vim text-object queries, which compile successfully but have not been manually validated in Vim mode.
+- Vim text-object queries;
+- native, unsaved-buffer syntax diagnostics from `papyrus-language-server`.
 
-The grammar directly models modern Starfield structures, including structs, custom events, groups, properties, functions and events, states, arrays, casts, qualified struct types, line continuations, and guard constructs. Compiled `.pex` files are deliberately not associated with the language.
+The first language-server milestone reports parser and structural errors, including a human-readable `Missing EndIf before EndFunction` diagnostic. Completion, hover, navigation, references, workspace indexing, semantic analysis, compilation, and debugging remain future work.
 
-Language-server features such as completion, hover, go to definition, references, semantic diagnostics, rename, and formatting are deferred to a later phase. Tree-sitter represents malformed structure with error or missing nodes, but it does not publish editor diagnostics by itself. For example, the missing `EndIf` fixture is rejected by the grammar tests without producing a Problems-panel entry or diagnostic underline in Zed.
+## Architecture
+
+[`papyrus-language-server`](https://github.com/monster-cookie/papyrus-language-server) is the single source of truth for the original cross-dialect Tree-sitter grammar and editor-neutral analysis. This repository retains only Zed-specific language metadata, Tree-sitter queries, the extension adapter, and original redistributable fixtures.
+
+Both the grammar and Rust test dependency are pinned to commit `fdf32993ed9331e8731180fa50281abc12344083`. The adapter targets the language-server `v0.1.0` release rather than following an unpinned latest release.
 
 ## Install as a Zed development extension
 
@@ -25,37 +31,59 @@ Language-server features such as completion, hover, go to definition, references
 4. Select the repository root containing `extension.toml`.
 5. Open a folder containing `.psc` source files.
 
-The grammar-only extension does not require Rust, Papyrus-Lsp, a Papyrus compiler, or game files. If Zed previously loaded the language-server build from this repository, reinstall the development extension and restart Zed once to clear the old adapter.
+Zed compiles the Rust adapter to WebAssembly when the development extension is installed. Rust must be installed through `rustup`, as required by Zed's extension development environment.
+
+### Language-server resolution
+
+The extension resolves `papyrus-language-server` in this order:
+
+1. the user-configured Zed binary path;
+2. an executable named `papyrus-language-server` available through Zed's worktree `PATH`;
+3. the pinned `v0.1.0` GitHub release for Windows x64, Linux x64, macOS Intel, or macOS Apple Silicon.
+
+Automatic download becomes available after the language-server `v0.1.0` release has been published. Until then, build the language-server locally and configure its executable path:
+
+```json
+{
+  "lsp": {
+    "papyrus-language-server": {
+      "binary": {
+        "path": "C:\\Repositories\\Personal\\papyrus-language-server\\target\\release\\papyrus-language-server.exe",
+        "arguments": [],
+        "env": {}
+      }
+    }
+  }
+}
+```
+
+Use the native executable path for Linux or macOS. Do not add embedded quote characters or a Windows `cmd.exe` wrapper; the language server is a directly executable native binary on every supported platform.
 
 ## Development
 
-Grammar development requires Node.js 18 or later and npm:
+Install the Zed WebAssembly target once, then run the checked-in Cargo validation:
 
 ```powershell
-npm install
-npm run extension:test
-npm run grammar:generate
-npm run grammar:build
-npm run grammar:test
-npm run grammar:test:native
+rustup target add wasm32-wasip2
+cargo fmt --all -- --check
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked
+cargo check --locked --target wasm32-wasip2
 ```
 
-The repository's `.zed/tasks.json` exposes the same install, generate, build, and test commands through Zed's task picker (`Ctrl+Shift+R` when the editor has focus).
+The repository's `.zed/tasks.json` exposes the same formatting, linting, testing, and WebAssembly checks through Zed's task picker.
 
-The grammar is pinned by `extension.toml` to an immutable commit in this repository. If the grammar changes, publish the grammar commit first and update the manifest revision in a later commit.
+The Rust tests parse the original Basic, Advanced, and Invalid fixtures for all three supported game dialects, enforce grammar-node coverage, compile every Zed Tree-sitter query, exercise every declared capture, validate the manifest, and verify release-asset selection.
 
-See the [implementation plan](docs/IMPLEMENTATION-PLAN.md), [testing record](docs/TESTING.md), [release process](docs/RELEASING.md), [known issues and deferred work](KNOWN-ISSUES.md), and [troubleshooting guide](docs/TROUBLESHOOTING.md).
+See the [implementation plan](docs/IMPLEMENTATION-PLAN.md), [testing record](docs/TESTING.md), [release process](docs/RELEASING.md), [known issues](KNOWN-ISSUES.md), and [troubleshooting guide](docs/TROUBLESHOOTING.md).
 
-## Compatibility
+## Compatibility evidence
 
-The grammar remains Starfield-first, but its syntax parsing is also validated against original Skyrim Anniversary Edition and Fallout 4 fixtures. Local release audits recursively parse the installed vanilla source corpora for all three games without copying Bethesda source into this repository. This provides broad syntax-compatibility evidence; it is not a claim of compiler equivalence or language-server semantics.
-
-## Non-goals for the initial release
-
-The grammar-only release does not provide a language server, Papyrus debugging, compilation, `.pex` decompilation, BA2 or ESM indexing, Creation Kit automation, or game-installation changes.
+The canonical grammar was recursively validated against locally installed vanilla source corpora for Starfield, Skyrim Anniversary Edition, and Fallout 4. Bethesda source files are never copied into either repository. These audits provide broad syntax-compatibility evidence; they do not claim compiler or semantic equivalence.
 
 ## License
 
-This repository and its original grammar are licensed under GPL-3.0-or-later; see [LICENSE](LICENSE). Development dependencies `tree-sitter-cli` and `web-tree-sitter` are MIT-licensed.
+This Zed extension and the canonical grammar/language server are licensed under GPL-3.0-or-later; see [LICENSE](LICENSE). Third-party Rust dependency licenses are recorded in the respective Cargo dependency graphs.
 
-Contributions should use original, redistributable fixtures and update the automated grammar checks and manual testing record.
+Contributions must use original, redistributable fixtures and update the relevant automated checks.
+

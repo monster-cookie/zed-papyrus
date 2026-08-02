@@ -2,45 +2,82 @@
 
 ## Release decision
 
-Version 0.1 is a grammar-only Zed extension. Language-server integration was prototyped during development, but its runtime installation, process-launch, and upstream diagnostic behavior added platform-specific failure modes that were not appropriate for the first release.
+The initial marketplace release includes both portable syntax support and the diagnostic-first `papyrus-language-server`. User-facing diagnostics are required because Tree-sitter error nodes alone do not create Zed underlines, hover messages, or Problems-panel entries.
 
-The adapter and its configuration were removed rather than shipped in a partially working state. Language-server support remains a separate future phase and is not required to install or use the syntax extension.
+The abandoned third-party `Papyrus-Lsp` prototype is not used. The replacement is the original, native Rust server in [`monster-cookie/papyrus-language-server`](https://github.com/monster-cookie/papyrus-language-server).
 
-## Grammar selection
+## Repository ownership
 
-No third-party Papyrus grammar is used. The previously attempted `ayooh/tree-sitter-papyrus` integration was explicitly rejected after failing the project's practical Starfield requirements, and it will not be reused or repaired for this project.
+`papyrus-language-server` is the single source of truth for:
 
-The selected implementation is an original Starfield-first grammar under `grammar/`, generated at Tree-sitter ABI 15. It directly models modern source constructs including Starfield guards. The grammar is GPL-3.0-or-later under this repository's license and contains no copied third-party Papyrus grammar code.
+- the original Tree-sitter Papyrus grammar;
+- generated parser sources and Rust grammar binding;
+- editor-neutral syntax diagnostics;
+- native language-server release archives.
+
+`zed-papyrus` owns only:
+
+- Zed language metadata;
+- highlighting, indentation, outline, bracket, override, and text-object queries;
+- the Zed WebAssembly adapter;
+- original editor-validation fixtures and tests;
+- Zed-specific installation, testing, and release documentation.
+
+The grammar manifest and Rust development dependency are both pinned to `fdf32993ed9331e8731180fa50281abc12344083`.
 
 ## Dependencies and licenses
 
-| Dependency | Purpose | Version | License |
+| Dependency | Purpose | Constraint | License |
 | --- | --- | --- | --- |
-| `tree-sitter-cli` | ABI-15 parser generation and WASM build | 0.26.11, exact | MIT |
-| `web-tree-sitter` | Cross-platform WASM fixture and query validation | 0.26.11, exact | MIT |
+| `zed_extension_api` | Zed WebAssembly adapter API | `0.7.0` | Apache-2.0 |
+| `tree-sitter` | Native fixture and query validation | `0.26.11` | MIT |
+| `tree-sitter-papyrus` | Canonical grammar under test | Exact Git commit | GPL-3.0-or-later |
+| `toml` | Manifest and language-config validation | `0.9`, locked | MIT OR Apache-2.0 |
 
-Both packages are development dependencies. The installed Zed extension does not launch an external runtime or language server.
+The test-only dependencies are not bundled into the installed extension. Exact resolutions are recorded in `Cargo.lock`.
 
-## Architecture
+## Adapter architecture
 
-1. `grammar/grammar.js` defines Papyrus syntax and generates committed ABI-15 C artifacts.
-2. Zed obtains the pinned grammar revision and builds the grammar under `grammar/`.
-3. `languages/papyrus` maps grammar nodes to highlighting, indentation, outline, brackets, overrides, and text objects.
-4. `scripts/test-grammar.mjs` loads the WASM grammar, validates original Starfield, Skyrim, and Fallout 4 fixture suites, enforces dialect and concrete-node coverage, and executes every declared Zed query capture against valid fixtures.
-5. Native Tree-sitter corpus tests assert exact syntax trees for focused declarations, comments, expressions, statements, dialect features, guard blocks, and representative invalid input.
+1. Read Zed's `papyrus-language-server` binary settings.
+2. Use an explicitly configured binary path when present, preserving configured arguments and environment variables.
+3. Otherwise ask the worktree for `papyrus-language-server` on `PATH`.
+4. Otherwise map Zed's host OS and architecture to an exact `v0.1.0` release asset.
+5. Download and extract that asset into the versioned Zed extension work directory.
+6. Mark Unix executables executable, validate the expected root executable exists, and cache its path.
+7. Launch the native server directly over standard input and standard output.
+
+The adapter uses a fixed release tag rather than a latest-release lookup. Unsupported architectures fail explicitly and can still use a configured compatible build.
+
+## Validation architecture
+
+Rust tests replace the previous repository-local Node grammar toolchain. They:
+
+- parse Basic and Advanced Starfield, Skyrim, and Fallout 4 fixtures;
+- require each Invalid fixture to contain its expected error or missing node;
+- validate inline valid and invalid regressions;
+- enforce concrete named grammar-node coverage;
+- compile all six Zed query files and exercise every declared capture;
+- validate the extension manifest, language assets, version synchronization, immutable grammar pin, and removal of duplicate grammar sources;
+- verify all supported and unsupported platform mappings.
+
+Native grammar corpus generation and exact-tree tests remain in the canonical language-server repository.
 
 ## Risks and mitigations
 
-- **Same-repository grammar:** keep the immutable grammar revision in `extension.toml`; publish grammar changes before updating that pin.
-- **Grammar breadth:** exercise original Basic, Advanced, and Invalid fixtures for Starfield, Skyrim, and Fallout 4; require concrete-node coverage; and assert exact focused trees in the native corpus.
-- **Editor versus diagnostics expectations:** document that Tree-sitter errors are structural and do not appear as language-server diagnostics.
-- **Dialect coverage:** retain Starfield-first positioning while recording original-fixture coverage and complete local installed-source audits for Skyrim Anniversary Edition and Fallout 4. Treat this as syntax evidence rather than compiler or semantic equivalence.
-- **Future language server:** design and validate it as an independent milestone with explicit cross-platform packaging and process tests before adding it back to the manifest.
+- **Unpublished automatic download:** use a configured local binary until `v0.1.0` is published, then run the clean-download acceptance test.
+- **Platform mismatch:** maintain an explicit allow-list that matches the release workflow's four artifacts.
+- **Grammar drift:** use the same immutable revision in the manifest and Cargo dependency.
+- **Duplicate ownership:** reject retired local grammar and Node-toolchain files in the manifest test.
+- **Diagnostic scope:** document that 0.1 provides syntax diagnostics, not completion or semantic project analysis.
+- **Redistribution:** commit only original synthetic fixtures; never copy Bethesda scripts, compilers, flags files, or game paths.
 
 ## Milestones
 
-1. Original ABI-15 grammar and fixtures — implemented and published at `6acf139cda738014f37fca2325248bbe77f0c811`.
-2. Zed language metadata and Tree-sitter queries — implemented; every declared capture compiles and is exercised by valid fixtures.
-3. Windows Zed syntax acceptance — recognition, highlighting, outline, comments, indentation, bracket matching, syntax-tree inspection, and the original task-picker run passed; Vim text objects remain deferred.
-4. Skyrim and Fallout 4 validation — implemented with original Basic, Advanced, and Invalid fixtures, exact-tree unit cases, and clean complete installed-source audits.
-5. Cross-platform language-server integration — deferred to a separate future phase.
+1. Cross-dialect canonical grammar and installed-source audits — complete.
+2. Native Rust diagnostic server with human-readable missing closers — complete in `papyrus-language-server`.
+3. Zed Rust adapter and canonical grammar consumption — implemented; automated validation pending the final release command pass.
+4. Local-binary Windows Zed diagnostic acceptance — pending.
+5. `papyrus-language-server` `v0.1.0` four-platform release — pending user-created tag and release workflow.
+6. Clean automatic-download Windows Zed acceptance — pending the server release.
+7. Initial Zed marketplace submission — pending release acceptance.
+
