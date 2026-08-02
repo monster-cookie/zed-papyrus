@@ -1,0 +1,23 @@
+[package]
+name = "zed-papyrus"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/monster-cookie/zed-papyrus"
+rust-version = "1.85"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+zed_extension_api = "0.7.0"
+
+[dev-dependencies]
+toml = "0.9"
+tree-sitter = "0.26.11"
+tree-sitter-papyrus = { git = "https://github.com/monster-cookie/papyrus-language-server", rev = "fdf32993ed9331e8731180fa50281abc12344083" }
+
+[lints.clippy]
+dbg_macro = "deny"
+todo = "deny"
+

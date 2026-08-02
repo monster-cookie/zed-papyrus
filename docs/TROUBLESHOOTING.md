@@ -1,45 +1,69 @@
 # Troubleshooting
 
-## Zed still reports a `papyrus-lsp` failure
+## Zed cannot find the `v0.1.0` language-server release
 
-The initial release no longer registers or starts a language server. If Zed previously loaded an older development build:
+Automatic download requires the public `papyrus-language-server` `v0.1.0` GitHub release. Until that release exists, build the server locally and configure its native executable under:
 
-1. Run `zed: install dev extension`.
-2. Select this repository root again.
-3. Restart Zed.
+```json
+{
+  "lsp": {
+    "papyrus-language-server": {
+      "binary": {
+        "path": "C:\\absolute\\path\\papyrus-language-server.exe"
+      }
+    }
+  }
+}
+```
 
-The repository should not contain `extension.wasm`, `Cargo.toml`, or a `[language_servers]` section in `extension.toml`.
+Use a native path on Linux or macOS. Do not include literal quote characters around the stored path and do not use an npm `.cmd` shim or `cmd.exe` wrapper.
+
+## A configured or PATH-installed server does not start
+
+The extension prefers a configured path and then Zed's worktree `PATH` before downloading. Confirm the selected file is the native `papyrus-language-server` executable. Restart Zed after changing the system `PATH`, because a running Zed process may retain its earlier environment.
+
+Open `zed: open log` to inspect the exact command and server standard error. The server reserves standard output for LSP protocol traffic.
+
+## Zed reports an unsupported platform
+
+Automatic archives exist only for Windows x64, Linux x64 using glibc, macOS Intel, and macOS Apple Silicon. Other architectures must use a compatible explicitly configured build.
+
+## The invalid fixture does not show a diagnostic
+
+Confirm all three layers independently:
+
+1. The status bar identifies the buffer as **Papyrus**.
+2. `zed: open log` shows `papyrus-language-server` starting without an installation or process error.
+3. `test-data/invalid/InvalidSyntax.psc` still omits `EndIf`.
+
+A healthy 0.1 server should publish `Missing EndIf before EndFunction` at `EndFunction` without requiring a save. Inserting `EndIf` should clear the diagnostic.
+
+If syntax highlighting and outline work but no diagnostic appears, the grammar is loaded but the language server is not necessarily healthy.
 
 ## A `.psc` file is plain text
 
-Confirm that the Papyrus development extension is installed and that Zed's language selector shows **Papyrus**. If another extension also claims `.psc`, use the language selector to choose Papyrus and inspect `zed: open log` for grammar-loading errors.
+Confirm the Papyrus development extension is installed and Zed's language selector shows **Papyrus**. If another extension also claims `.psc`, select Papyrus explicitly and inspect `zed: open log` for grammar-loading errors.
 
 ## Highlighting or outline entries look wrong
 
-Run `dev: open highlights tree view` to compare syntax nodes and highlight captures. Reduce the problem to a redistributable `.psc` fixture and run:
+Use `dev: open highlights tree view` to compare syntax nodes and captures. Reduce the issue to a redistributable fixture, then run:
 
 ```powershell
-npm run grammar:build
-npm run grammar:test
+cargo test --locked
 ```
 
-## Missing syntax does not appear in the Problems panel
+The test compiles all queries and exercises their declared captures against valid fixtures.
 
-Tree-sitter supplies structural parsing for highlighting, indentation, outline, and related editor features. It can represent invalid input with `ERROR` or missing nodes, but it does not publish language-server diagnostics.
+## Rust extension compilation fails
 
-The automated invalid-fixture test verifies that `InvalidSyntax.psc` is structurally rejected. Inspect the syntax tree in Zed to see that result. Problems-panel messages and diagnostic underlines are deferred until a future language-server phase.
-
-## Grammar development commands fail
-
-Install Node.js 18 or later, run `npm install`, and regenerate before building:
+Zed requires Rust installed through `rustup` for development extensions. From a terminal, run:
 
 ```powershell
-npm run grammar:generate
-npm run grammar:build
-npm run grammar:test
+rustup target add wasm32-wasip2
+cargo check --locked --target wasm32-wasip2
 ```
 
-`grammar:build` may download or invoke Tree-sitter's WASI SDK in the user cache. The generated `grammar/papyrus.wasm` file is intentionally ignored.
+If Cargo cannot fetch the pinned grammar, confirm the public language-server repository and commit are reachable from the machine.
 
 ## `Ctrl+Shift+R` reruns one task instead of showing the picker
 

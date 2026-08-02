@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate extension and grammar
+    name: Validate extension, grammar, and queries
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -26,29 +26,17 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 24
-          cache: npm
+      - name: Install Zed WebAssembly target
+        run: rustup target add wasm32-wasip2
 
-      - name: Install development dependencies
-        run: npm ci
+      - name: Check formatting
+        run: cargo fmt --all -- --check
 
-      - name: Validate extension structure
-        run: npm run extension:test
+      - name: Lint extension and tests
+        run: cargo clippy --locked --all-targets -- -D warnings
 
-      - name: Generate Tree-sitter parser
-        run: npm run grammar:generate
+      - name: Test extension, grammar, and queries
+        run: cargo test --locked
 
-      - name: Verify generated parser is committed
-        run: git diff --exit-code -- grammar/src/grammar.json grammar/src/node-types.json grammar/src/parser.c
-
-      - name: Build Tree-sitter WebAssembly grammar
-        run: npm run grammar:build
-
-      - name: Test fixtures and Zed queries
-        run: npm run grammar:test
-
-      - name: Test native Tree-sitter corpus
-        run: npm run grammar:test:native
+      - name: Check Zed WebAssembly extension
+        run: cargo check --locked --target wasm32-wasip2
