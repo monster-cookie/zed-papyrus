@@ -8,7 +8,7 @@ The initial release deliberately focuses on portable, dependency-light language 
 
 - `.psc` file recognition;
 - syntax highlighting;
-- line comments;
+- line, multiline, and documentation comments;
 - indentation and matching/autoclose for parentheses, square brackets, documentation-comment braces, and quotes;
 - outline symbols;
 - Vim text-object queries, which compile successfully but have not been manually validated in Vim mode.
@@ -48,7 +48,7 @@ See the [implementation plan](docs/IMPLEMENTATION-PLAN.md), [testing record](doc
 
 ## Compatibility
 
-Starfield is the validated target for the initial release. Skyrim and Fallout 4 support is a future compatibility milestone; the grammar does not claim complete coverage for their dialects yet.
+The grammar remains Starfield-first, but its syntax parsing is also validated against original Skyrim Anniversary Edition and Fallout 4 fixtures. Local release audits recursively parse the installed vanilla source corpora for all three games without copying Bethesda source into this repository. This provides broad syntax-compatibility evidence; it is not a claim of compiler equivalence or language-server semantics.
 
 ## Non-goals for the initial release
 

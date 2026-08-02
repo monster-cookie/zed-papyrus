@@ -527,8 +527,8 @@ export default grammar({
     ),
 
     line_comment: _ => token(seq(';', /[^\r\n]*/)),
-    block_comment: _ => token(seq(';/', repeat(choice(/[^/]/, /\/[^;]/)), '/;')),
-    documentation_comment: _ => seq('{', optional(token.immediate(/[^}]+/)), '}'),
+    block_comment: _ => token(prec(1, seq(';/', /[^/]*\/+([^/;][^/]*\/+)*/, ';'))),
+    documentation_comment: _ => seq('{', optional(token.immediate(prec(1, /[^}]+/))), '}'),
     line_continuation: _ => token(seq('\\', /[ \t]*/, /\r?\n/)),
     newline: _ => /\r?\n/,
     identifier: _ => /[A-Za-z_][A-Za-z0-9_]*/,

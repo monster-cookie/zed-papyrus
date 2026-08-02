@@ -1,0 +1,173 @@
+==================
+Expressions and literals
+==================
+
+ScriptName ExpressionFixture
+
+Function Evaluate(Var value, ObjectReference target)
+    Bool booleanValue = True || False && !False
+    Bool equalityValue = 1 == 1 && 1 != 2
+    Bool relationValue = 1 < 2 && 2 <= 2 && 3 > 2 && 3 >= 3
+    Int integerValue = 0x10 + 2 - 3 * 4 / 2 % 2
+    Float floatValue = -(1.5e+2 + 2.0)
+    String stringValue = "line\ntext"
+    Actor castValue = value As Actor
+    Bool typeValue = value Is Actor
+    ObjectReference memberValue = target.GetLinkedRef()
+    Int[] values = New Int[4]
+    Int indexedValue = values[0]
+    Debug.Trace(asText = stringValue)
+EndFunction
+
+---
+
+(source_file
+  (newline)
+  (script_declaration
+    (identifier))
+  (newline)
+  (newline)
+  (function_definition
+    (identifier)
+    (parameters
+      (parameter
+        (type
+          (builtin_type))
+        (identifier))
+      (parameter
+        (type
+          (identifier))
+        (identifier)))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (binary_expression
+        (boolean)
+        (binary_expression
+          (boolean)
+          (unary_expression
+            (boolean)))))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (integer)
+          (integer))
+        (binary_expression
+          (integer)
+          (integer))))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (integer)
+              (integer))
+            (binary_expression
+              (integer)
+              (integer)))
+          (binary_expression
+            (integer)
+            (integer)))
+        (binary_expression
+          (integer)
+          (integer))))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (integer)
+          (integer))
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (integer)
+              (integer))
+            (integer))
+          (integer))))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (unary_expression
+        (parenthesized_expression
+          (binary_expression
+            (float)
+            (float)))))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (string
+        (escape_sequence)))
+    (newline)
+    (variable_declaration
+      (type
+        (identifier))
+      (identifier)
+      (cast_expression
+        (identifier)
+        (type
+          (identifier))))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (type_test_expression
+        (identifier)
+        (type
+          (identifier))))
+    (newline)
+    (variable_declaration
+      (type
+        (identifier))
+      (identifier)
+      (call_expression
+        (member_expression
+          (identifier)
+          (identifier))
+        (arguments)))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type)
+        (array_type_suffix))
+      (identifier)
+      (new_expression
+        (builtin_type)
+        (integer)))
+    (newline)
+    (variable_declaration
+      (type
+        (builtin_type))
+      (identifier)
+      (subscript_expression
+        (identifier)
+        (integer)))
+    (newline)
+    (expression_statement
+      (call_expression
+        (member_expression
+          (identifier)
+          (identifier))
+        (arguments
+          (argument
+            (identifier)
+            (identifier)))))
+    (newline))
+  (newline))
