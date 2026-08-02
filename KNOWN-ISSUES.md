@@ -2,7 +2,7 @@
 
 ## Diagnostic-first language server
 
-`papyrus-language-server` 0.1 provides native syntax and structural diagnostics for open buffers. It does not yet provide:
+`papyrus-language-server` 0.1.0 provides native syntax and structural diagnostics for open buffers. It does not yet provide:
 
 - completion or signature help;
 - hover information;
@@ -15,11 +15,11 @@
 
 Those features require later language-server milestones. Debugging is a separate Debug Adapter Protocol concern.
 
-## Automatic download awaits the first server release
+## Automatic-download acceptance
 
-The adapter is pinned to `papyrus-language-server` release `v0.1.0`. Until that tag's release workflow publishes native archives, automatic installation will report that the release is unavailable. Development testing must use a locally built executable through the Zed binary-path setting or `PATH`.
+The adapter is pinned to the published `papyrus-language-server` release `v0.1.0`. Its release workflow successfully built and published native archives for all four supported platforms.
 
-The automatic-download acceptance pass remains incomplete until all four release archives exist and Windows Zed has successfully downloaded and launched the pinned server without a local override.
+Windows local-binary diagnostic acceptance completed successfully on 2026-08-02. The clean automatic-download acceptance pass remains incomplete until Windows Zed has downloaded and launched the pinned server without a configured binary or `PATH` override.
 
 ## Supported automatic-download platforms
 
@@ -35,16 +35,6 @@ Windows ARM64, Windows x86, Linux ARM64, Linux x86, and macOS x86 are rejected w
 ## Release checksums
 
 The language-server release workflow publishes a SHA-256 file beside every archive. Zed's current extension download helper downloads and extracts the selected GitHub release asset directly and does not expose the archive bytes for adapter-side checksum verification. The adapter therefore relies on the pinned tag, GitHub HTTPS, exact asset names, and Zed's download implementation.
-
-## Diagnostic acceptance still requires Zed testing
-
-The native language-server tests already verify the missing-`EndIf` message and diagnostic clearing after the closer is inserted. Before release, the development extension must still demonstrate in Zed that:
-
-- an error appears without saving;
-- the range identifies the conflicting closer rather than the whole file;
-- hover displays `Missing EndIf before EndFunction`;
-- the error appears in Zed's diagnostics view;
-- inserting `EndIf` clears it promptly.
 
 ## Vim text objects
 

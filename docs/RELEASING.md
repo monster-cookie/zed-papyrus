@@ -5,7 +5,7 @@
 The initial extension release depends on native assets from [`papyrus-language-server`](https://github.com/monster-cookie/papyrus-language-server). Release in this order:
 
 1. Complete and record the language-server CI checks on `master`.
-2. Create the user-owned `v0.1.0` tag at commit `fdf32993ed9331e8731180fa50281abc12344083` and push that tag.
+2. Create the user-owned `v0.1.0` tag at commit `f4baf7da54ed6fca79ff81ae211b3364282630b6` and push that tag.
 3. Confirm the language-server release workflow publishes these archives and matching `.sha256` files:
    - `papyrus-language-server-x86_64-pc-windows-msvc.zip`;
    - `papyrus-language-server-x86_64-unknown-linux-gnu.tar.gz`;
@@ -15,6 +15,8 @@ The initial extension release depends on native assets from [`papyrus-language-s
 5. Complete the `zed-papyrus` Linux CI checks on the intended release commit.
 6. Advance the extension version only after both repositories' release paths and supported platform builds are validated.
 7. Submit the Zed extension revision to the marketplace registry.
+
+The `papyrus-language-server` `v0.1.0` tag, four native archives, matching checksum files, and GitHub release were successfully published on August 2nd, 2026. Clean automatic-download acceptance remains the next release gate.
 
 The user performs all Git tags, commits, pushes, and pull requests.
 

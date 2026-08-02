@@ -1,8 +1,8 @@
 # Troubleshooting
 
-## Zed cannot find the `v0.1.0` language-server release
+## Zed cannot download the `v0.1.0` language-server release
 
-Automatic download requires the public `papyrus-language-server` `v0.1.0` GitHub release. Until that release exists, build the server locally and configure its native executable under:
+The public `papyrus-language-server` `v0.1.0` GitHub release contains native archives for all four supported platforms. If automatic download fails, confirm GitHub is reachable and inspect `zed: open log` for the requested asset name and download error. As a fallback, build or download the server manually and configure its native executable under:
 
 ```json
 {

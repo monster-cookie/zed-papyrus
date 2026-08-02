@@ -48,20 +48,25 @@ Vim text objects remain untested manually because Vim mode is a global editor se
 
 ## Diagnostic acceptance with a local server binary
 
-Before the server release exists:
+Results recorded on Windows x64 on 2026-08-02 using a locally built release executable configured under `lsp.papyrus-language-server.binary.path`:
 
-1. Build `papyrus-language-server` in release mode.
-2. Configure its absolute executable path under `lsp.papyrus-language-server.binary.path` in Zed settings.
-3. Reinstall this repository as a development extension.
-4. Open `test-data/invalid/InvalidSyntax.psc`.
-5. Confirm `Missing EndIf before EndFunction` appears without saving.
-6. Confirm hover and the diagnostics view show the message at `EndFunction`.
-7. Insert `EndIf` and confirm the diagnostic clears promptly.
-8. Reopen valid Starfield, Skyrim, and Fallout 4 fixtures and confirm no diagnostics appear.
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Valid Starfield fixtures | Pass | `BasicStarfield.psc` and `AdvancedStarfield.psc` opened with no diagnostics. |
+| Valid Skyrim fixtures | Pass | `BasicSkyrim.psc` and `AdvancedSkyrim.psc` opened with no diagnostics. |
+| Valid Fallout 4 fixtures | Pass | `BasicFallout4.psc` and `AdvancedFallout4.psc` opened with no diagnostics. |
+| Missing Starfield closer | Pass | `InvalidSyntax.psc` reported `Missing EndIf before EndFunction` at `EndFunction`. |
+| Missing Skyrim closer | Pass | `InvalidSkyrim.psc` reported `Missing EndState`. |
+| Missing Fallout 4 closer | Pass | `InvalidFallout4.psc` reported `Missing EndStruct`. |
+| Unsaved-buffer updates | Pass | Inserting `EndIf` cleared the diagnostic immediately, and undoing the insertion restored it. |
+| Zed presentation | Pass | The editor underline, hover message, and diagnostics view displayed the human-readable diagnostic. |
+| Process restart | Pass | The configured server relaunched and diagnostics remained functional after restarting Zed. |
+
+This completes Windows local-binary diagnostic acceptance. Automatic-download acceptance remains separate and pending a clean Zed download test.
 
 ## Automatic-download acceptance
 
-After the `papyrus-language-server` `v0.1.0` release publishes all four archives:
+The `papyrus-language-server` `v0.1.0` workflow successfully published all four native archives and matching checksum files on 2026-08-02. Complete the remaining acceptance steps as follows:
 
 1. Remove the configured binary override and ensure the server is not on Zed's `PATH`.
 2. Remove the extension's downloaded server work directory or reinstall the development extension.

@@ -21,7 +21,7 @@ The first language-server milestone reports parser and structural errors, includ
 
 [`papyrus-language-server`](https://github.com/monster-cookie/papyrus-language-server) is the single source of truth for the original cross-dialect Tree-sitter grammar and editor-neutral analysis. This repository retains only Zed-specific language metadata, Tree-sitter queries, the extension adapter, and original redistributable fixtures.
 
-Both the grammar and Rust test dependency are pinned to commit `fdf32993ed9331e8731180fa50281abc12344083`. The adapter targets the language-server `v0.1.0` release rather than following an unpinned latest release.
+Both the grammar and Rust test dependency are pinned to release commit `f4baf7da54ed6fca79ff81ae211b3364282630b6`. The adapter targets the language-server `v0.1.0` release rather than following an unpinned latest release.
 
 ## Install as a Zed development extension
 
@@ -41,7 +41,7 @@ The extension resolves `papyrus-language-server` in this order:
 2. an executable named `papyrus-language-server` available through Zed's worktree `PATH`;
 3. the pinned `v0.1.0` GitHub release for Windows x64, Linux x64, macOS Intel, or macOS Apple Silicon.
 
-Automatic download becomes available after the language-server `v0.1.0` release has been published. Until then, build the language-server locally and configure its executable path:
+The published language-server `v0.1.0` release supports automatic download on all four listed platforms. To test a local build or explicitly override the downloaded server, configure its executable path:
 
 ```json
 {
