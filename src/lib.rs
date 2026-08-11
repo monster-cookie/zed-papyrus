@@ -115,11 +115,6 @@ impl PapyrusExtension {
                     asset.archive_name
                 )
             })?;
-
-            if os != zed::Os::Windows {
-                zed::make_file_executable(&binary_path)
-                    .map_err(|error| format!("failed to mark {binary_path} executable: {error}"))?;
-            }
         }
 
         if !fs::metadata(&binary_path).is_ok_and(|metadata| metadata.is_file()) {
